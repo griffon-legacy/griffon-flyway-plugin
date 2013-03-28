@@ -38,11 +38,11 @@ class FlywayGriffonPlugin {
     // URL where documentation can be found
     String documentation = ''
     // URL where source can be found
-    String source = 'https://github.com/griffon/griffon-datasource-plugin'
+    String source = 'https://github.com/griffon/griffon-flyway-plugin'
     // Map of Bnd directives and/or Manifest entries
     // see http://www.aqute.biz/Bnd/Bnd for reference
     Map manifest = [
-        'Bundle-Description': 'Plugin summary/headline'
+        'Bundle-Description': 'Flyway powered database migrations'
     ]
     List authors = [
         [
@@ -68,7 +68,7 @@ Flyway supports two types of migration formats: SQL and Java. SQL migrations
 should be placed inside `griffon-app/resources/flyway/migrations/<datasource>`
 where as Java migrations go in `src/main/flyway/migrations/<datasource>`. In both
 cases <datasource> stands for the name of the datasource that's being targeted
-by the migration. The default datasource required a slightly modified name, it
+by the migration. The default datasource requires a slightly modified name, it
 should be `defaultds` because `default` is a reserved keyword in Java, thus
 preventing its usage in Java based migrations.
 

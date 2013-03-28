@@ -19,6 +19,7 @@ package griffon.plugins.flyway
 import griffon.core.GriffonApplication
 
 import com.googlecode.flyway.core.Flyway
+import com.googlecode.flyway.core.api.FlywayException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -66,7 +67,15 @@ class FlywayMigrator {
 
         flyway.setDataSource(dataSource)
         flyway.setLocations('flyway/migrations/' + (dataSourceName == DEFAULT ? DEFAULT + 'ds' : dataSourceName))
-        if (!flyway.initOnMigrate) flyway.init()
+        try {
+            // force init
+            flyway.init()
+        } catch (FlywayException fe) {
+            // ignore it as we could be calling init() on a non-empty schema
+            // if init() really failed for the first time then migrate() will fail too
+            // in which case we let the application crash as the DB would be in
+            // an inconsistent state
+        }
         if (LOG.infoEnabled) {
             LOG.info("Running migrations for datasource ${dataSourceName}")
         }

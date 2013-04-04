@@ -1,0 +1,11 @@
+DESCRIPTION
+        flyway-migrate
+
+	Single line description goes here.
+
+SYNTAX
+        flyway-migrate [options]
+
+OPTIONS
+        --non-interactive
+                Controls if the shell can ask for input or not.

@@ -1,0 +1,11 @@
+DESCRIPTION
+        flyway-info
+
+	Single line description goes here.
+
+SYNTAX
+        flyway-info [options]
+
+OPTIONS
+        --non-interactive
+                Controls if the shell can ask for input or not.

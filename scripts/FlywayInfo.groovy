@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
+import com.googlecode.flyway.core.info.MigrationInfoDumper
+
+includeTargets << griffonScript('Package')
+
 includePluginScript('flyway', '_FlywayInit')
 
-target(name: 'flywayclean',
+target(name: 'flywayinfo',
         description: "The description of the script goes here!",
         prehook: null, posthook: null) {
-        depends flywayInit
+        depends flywayInit, prepackage // we need to prepackage to put migrations into classpath
 
-        flyway.clean()
+        println('\n' + MigrationInfoDumper.dumpToAsciiTable(flyway.info().all()))
 }
 
-setDefaultTarget('flywayclean')
+setDefaultTarget('flywayinfo')

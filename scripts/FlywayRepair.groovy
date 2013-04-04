@@ -16,12 +16,12 @@
 
 includePluginScript('flyway', '_FlywayInit')
 
-target(name: 'flywayclean',
+target(name: 'flywayrepair',
         description: "The description of the script goes here!",
         prehook: null, posthook: null) {
         depends flywayInit
 
-        flyway.clean()
+        flyway.repair()
 }
 
-setDefaultTarget('flywayclean')
+setDefaultTarget('flywayrepair')

@@ -1,0 +1,11 @@
+DESCRIPTION
+        flyway-validate
+
+	Single line description goes here.
+
+SYNTAX
+        flyway-validate [options]
+
+OPTIONS
+        --non-interactive
+                Controls if the shell can ask for input or not.

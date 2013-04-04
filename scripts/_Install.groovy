@@ -30,5 +30,5 @@ if(!new File('${basedir}/griffon-app/conf/FlywayConfig.groovy').exists()) {
         path:   'griffon-app/conf')
 }
 
-ant.mkdir(dir: "${basedir}/griffon-app/resources/flyway/migrations")
-ant.mkdir(dir: "${basedir}/src/flyway/migrations")
+ant.mkdir(dir: "${basedir}/griffon-app/resources/flyway/migrations/defaultds")
+ant.mkdir(dir: "${basedir}/src/main/flyway/migrations/defaultds")

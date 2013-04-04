@@ -37,12 +37,11 @@ class FlywayMigrator {
     private static final Logger LOG = LoggerFactory.getLogger(FlywayMigrator)
     private static final String DEFAULT = 'default'
 
-
-    ConfigObject createConfig(GriffonApplication app) {
+    ConfigObject createConfig(GriffonApplication app, String dataSourceName = 'default') {
         if (!app.config.pluginConfig.flyway) {
             app.config.pluginConfig.flyway = loadConfigWithI18n('FlywayConfig')
         }
-        app.config.pluginConfig.flyway
+        narrowConfig(app.config.pluginConfig.flyway, dataSourceName)
     }
 
     private ConfigObject narrowConfig(ConfigObject config, String dataSourceName) {
@@ -50,23 +49,9 @@ class FlywayMigrator {
     }
 
     void runDatabaseMigration(GriffonApplication app, String dataSourceName, DataSource dataSource) {
-        Flyway flyway = new Flyway()
+        ConfigObject config = createConfig(app, dataSourceName)
 
-        ConfigObject config = narrowConfig(createConfig(app), dataSourceName)
-        for (entry in config) {
-            if (entry.key == 'class' || entry.key == 'metaClass') continue
-            try {
-                String setter = getSetterName(entry.key)
-                flyway."${setter}"(entry.value)
-            } catch (Exception e) {
-                if (LOG.traceEnabled) {
-                    LOG.trace("Cant' set property ${entry.key} on Flyway instance for dataSource ${dataSourceName}", sanitize(e))
-                }
-            }
-        }
-
-        flyway.setDataSource(dataSource)
-        flyway.setLocations('flyway/migrations/' + (dataSourceName == DEFAULT ? DEFAULT + 'ds' : dataSourceName))
+        Flyway flyway = createFlyway(config, dataSourceName, dataSource)
         try {
             // force init
             flyway.init()
@@ -81,5 +66,25 @@ class FlywayMigrator {
         }
         flyway.migrate()
         app.event('FlywayMigration', [config, dataSourceName, dataSource])
+    }
+
+    Flyway createFlyway(ConfigObject config, String dataSourceName, DataSource dataSource) {
+        Flyway flyway = new Flyway()
+
+        for (entry in config) {
+            if (entry.key == 'class' || entry.key == 'metaClass') continue
+            try {
+                String setter = getSetterName(entry.key)
+                flyway."${setter}"(entry.value)
+            } catch (Exception e) {
+                if (LOG.traceEnabled) {
+                    LOG.trace("Cant' set property ${entry.key} on Flyway instance for dataSource ${dataSourceName}", sanitize(e))
+                }
+            }
+        }
+
+        flyway.setDataSource(dataSource)
+        flyway.setLocations('flyway/migrations/' + (dataSourceName == DEFAULT ? DEFAULT + 'ds' : dataSourceName))
+        flyway
     }
 }

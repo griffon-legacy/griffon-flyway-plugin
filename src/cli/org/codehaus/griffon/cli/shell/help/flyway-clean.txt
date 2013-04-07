@@ -1,11 +1,12 @@
 DESCRIPTION
         flyway-clean
 
-	Single line description goes here.
+	Drops all (tables, views, procedures, triggers, ...) in the configured schemas.
 
 SYNTAX
         flyway-clean [options]
 
 OPTIONS
-        --non-interactive
-                Controls if the shell can ask for input or not.
+        --datasource
+                Name of the datasource on which the command will be invoked.
+                (defaults to default)

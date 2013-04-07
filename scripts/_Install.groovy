@@ -22,12 +22,12 @@ includeTargets << griffonScript('_GriffonCreateArtifacts')
 argsMap = argsMap ?: [:]
 argsMap.skipPackagePrompt = true
 
-if(!new File('${basedir}/griffon-app/conf/FlywayConfig.groovy').exists()) {
+if (!new File('${basedir}/griffon-app/conf/FlywayConfig.groovy').exists()) {
     createArtifact(
-        name:   'FlywayConfig',
+        name: 'FlywayConfig',
         suffix: '',
-        type:   'FlywayConfig',
-        path:   'griffon-app/conf')
+        type: 'FlywayConfig',
+        path: 'griffon-app/conf')
 }
 
 ant.mkdir(dir: "${basedir}/griffon-app/resources/flyway/migrations/defaultds")

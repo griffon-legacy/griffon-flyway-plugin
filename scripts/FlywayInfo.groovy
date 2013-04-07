@@ -16,16 +16,21 @@
 
 import com.googlecode.flyway.core.info.MigrationInfoDumper
 
+/**
+ * @author Peter Kofler
+ * @author Andres Almiray
+ */
+
 includeTargets << griffonScript('Package')
 
 includePluginScript('flyway', '_FlywayInit')
 
 target(name: 'flywayinfo',
-        description: "The description of the script goes here!",
-        prehook: null, posthook: null) {
-        depends flywayInit, prepackage // we need to prepackage to put migrations into classpath
+    description: "Retrieve the complete information about the migrations including applied, pending and current migrations with details and status.",
+    prehook: null, posthook: null) {
+    depends flywayInit, prepackage // we need to prepackage to put migrations into classpath
 
-        println('\n' + MigrationInfoDumper.dumpToAsciiTable(flyway.info().all()))
+    println('\n' + MigrationInfoDumper.dumpToAsciiTable(flyway.info().all()))
 }
 
 setDefaultTarget('flywayinfo')

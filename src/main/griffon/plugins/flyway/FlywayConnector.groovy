@@ -16,14 +16,13 @@
 
 package griffon.plugins.flyway
 
-import griffon.core.GriffonApplication
-
 import com.googlecode.flyway.core.Flyway
-import com.googlecode.flyway.core.api.FlywayException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import javax.sql.DataSource
+
+import griffon.core.GriffonApplication
 
 import static griffon.util.ConfigUtils.loadConfigWithI18n
 import static griffon.util.GriffonExceptionHandler.sanitize
@@ -33,8 +32,8 @@ import static griffon.util.GriffonNameUtils.getSetterName
  * @author Andres Almiray
  */
 @Singleton
-class FlywayMigrator {
-    private static final Logger LOG = LoggerFactory.getLogger(FlywayMigrator)
+class FlywayConnector {
+    private static final Logger LOG = LoggerFactory.getLogger(FlywayConnector)
     private static final String DEFAULT = 'default'
 
     ConfigObject createConfig(GriffonApplication app, String dataSourceName = 'default') {
@@ -48,27 +47,48 @@ class FlywayMigrator {
         return dataSourceName == DEFAULT ? config.dataSource : config.dataSources[dataSourceName]
     }
 
-    void runDatabaseMigration(GriffonApplication app, String dataSourceName, DataSource dataSource) {
-        ConfigObject config = createConfig(app, dataSourceName)
-
-        Flyway flyway = createFlyway(config, dataSourceName, dataSource)
-        try {
-            // force init
-            flyway.init()
-        } catch (FlywayException fe) {
-            // ignore it as we could be calling init() on a non-empty schema
-            // if init() really failed for the first time then migrate() will fail too
-            // in which case we let the application crash as the DB would be in
-            // an inconsistent state
-        }
+    void migrate(GriffonApplication app, String dataSourceName, DataSource dataSource) {
+        Flyway flyway = createFlyway(app, dataSourceName, dataSource)
         if (LOG.infoEnabled) {
-            LOG.info("Running migrations for datasource ${dataSourceName}")
+            LOG.info("Running 'migrate' for datasource ${dataSourceName}")
         }
         flyway.migrate()
-        app.event('FlywayMigration', [config, dataSourceName, dataSource])
+        app.event('FlywayCommand', ['migrate', dataSourceName, dataSource])
     }
 
-    Flyway createFlyway(ConfigObject config, String dataSourceName, DataSource dataSource) {
+    void init(GriffonApplication app, String dataSourceName, DataSource dataSource) {
+        Flyway flyway = createFlyway(app, dataSourceName, dataSource)
+        if (LOG.infoEnabled) {
+            LOG.info("Running 'init' for datasource ${dataSourceName}")
+        }
+        flyway.init()
+        app.event('FlywayCommand', ['init', dataSourceName, dataSource])
+    }
+
+    void repair(GriffonApplication app, String dataSourceName, DataSource dataSource) {
+        Flyway flyway = createFlyway(app, dataSourceName, dataSource)
+        if (LOG.infoEnabled) {
+            LOG.info("Running 'repair' for datasource ${dataSourceName}")
+        }
+        flyway.repair()
+        app.event('FlywayCommand', ['repair', dataSourceName, dataSource])
+    }
+
+    void validate(GriffonApplication app, String dataSourceName, DataSource dataSource) {
+        Flyway flyway = createFlyway(app, dataSourceName, dataSource)
+        if (LOG.infoEnabled) {
+            LOG.info("Running 'validate' for datasource ${dataSourceName}")
+        }
+        flyway.validate()
+        app.event('FlywayCommand', ['validate', dataSourceName, dataSource])
+    }
+
+    Flyway createFlyway(GriffonApplication app, String dataSourceName, DataSource dataSource) {
+        ConfigObject config = createConfig(app, dataSourceName)
+        configureFlyway(config, dataSourceName, dataSource)
+    }
+
+    Flyway configureFlyway(ConfigObject config, String dataSourceName, DataSource dataSource) {
         Flyway flyway = new Flyway()
 
         for (entry in config) {
@@ -84,7 +104,9 @@ class FlywayMigrator {
         }
 
         flyway.setDataSource(dataSource)
-        flyway.setLocations('flyway/migrations/' + (dataSourceName == DEFAULT ? DEFAULT + 'ds' : dataSourceName))
+        if (!config.locations) {
+            flyway.setLocations('flyway/migrations/' + (dataSourceName == DEFAULT ? DEFAULT + 'ds' : dataSourceName))
+        }
         flyway
     }
 }

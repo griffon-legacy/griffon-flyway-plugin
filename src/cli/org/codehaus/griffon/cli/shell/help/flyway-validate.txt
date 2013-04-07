@@ -1,11 +1,13 @@
 DESCRIPTION
         flyway-validate
 
-	Single line description goes here.
+	Validate the applied migrations in the database against the available
+	classpath migrations in order to detect accidental migration changes.
 
 SYNTAX
         flyway-validate [options]
 
 OPTIONS
-        --non-interactive
-                Controls if the shell can ask for input or not.
+        --datasource
+                Name of the datasource on which the command will be invoked.
+                (defaults to default)

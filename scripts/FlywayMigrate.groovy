@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
+/**
+ * @author Peter Kofler
+ * @author Andres Almiray
+ */
+
 includeTargets << griffonScript('Package')
 
 includePluginScript('flyway', '_FlywayInit')
 
 target(name: 'flywaymigrate',
-        description: "The description of the script goes here!",
-        prehook: null, posthook: null) {
-        depends flywayInit, prepackage // we need to prepackage to put migrations into classpath
+    description: "triggers the migration of the configured database to the latest version.",
+    prehook: null, posthook: null) {
+    depends flywayInit, prepackage // we need to prepackage to put migrations into classpath
 
-        flyway.migrate()
+    flyway.migrate()
 }
 
 setDefaultTarget('flywaymigrate')

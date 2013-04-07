@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
+/**
+ * @author Peter Kofler
+ * @author Andres Almiray
+ */
+
 includePluginScript('flyway', '_FlywayInit')
 
 target(name: 'flywayinit',
-        description: "The description of the script goes here!",
-        prehook: null, posthook: null) {
-        depends flywayInit
+    description: "Initializes the metadata table in an existing schema.",
+    prehook: null, posthook: null) {
+    depends flywayInit
 
-        flyway.init()
+    flyway.init()
 }
 
 setDefaultTarget('flywayinit')

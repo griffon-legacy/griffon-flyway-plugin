@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
+/**
+ * @author Peter Kofler
+ * @author Andres Almiray
+ */
+
 includeTargets << griffonScript('Package')
 
 includePluginScript('flyway', '_FlywayInit')
 
 target(name: 'flywayvalidate',
-        description: "The description of the script goes here!",
-        prehook: null, posthook: null) {
-        depends flywayInit, prepackage // we need to prepackage to put migrations into classpath
+    description: "Validate the applied migrations in the database against the available classpath migrations in order to detect accidental migration changes.",
+    prehook: null, posthook: null) {
+    depends flywayInit, prepackage // we need to prepackage to put migrations into classpath
 
-        flyway.validate()
+    flyway.validate()
 }
 
 setDefaultTarget('flywayvalidate')

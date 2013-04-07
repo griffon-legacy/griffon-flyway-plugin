@@ -1,11 +1,12 @@
 DESCRIPTION
         flyway-migrate
 
-	Single line description goes here.
+	Triggers the migration of the configured database to the latest version.
 
 SYNTAX
         flyway-migrate [options]
 
 OPTIONS
-        --non-interactive
-                Controls if the shell can ask for input or not.
+        --datasource
+                Name of the datasource on which the command will be invoked.
+                (defaults to default)

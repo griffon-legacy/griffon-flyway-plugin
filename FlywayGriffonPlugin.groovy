@@ -98,8 +98,9 @@ following way
 
 The following events will be triggered by this addon
 
- * FlywayMigration[config, dataSourceName, dataSource] - after migrations have
-   run on the specified datasource
+ * FlywayCommand[command, dataSourceName, dataSource] - after a Flyway command
+   has been successfully executed. Comamnd may be one of `init`, `validate`,
+   `migrate`, `clean` or `repair`.
 
 [1]: http://flywaydb.org
 [2]: /plugin/datasource

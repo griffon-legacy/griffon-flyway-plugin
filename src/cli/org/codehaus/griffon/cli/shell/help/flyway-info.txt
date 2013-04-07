@@ -1,11 +1,12 @@
 DESCRIPTION
         flyway-info
 
-	Single line description goes here.
+	Retrieve the complete information about the migrations including applied,
+	pending and current migrations with details and status.
 
 SYNTAX
         flyway-info [options]
 
 OPTIONS
-        --non-interactive
-                Controls if the shell can ask for input or not.
+        --datasource
+                Name of the datasource on which the command will be invoked.

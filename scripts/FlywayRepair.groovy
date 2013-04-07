@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
+/**
+ * @author Peter Kofler
+ * @author Andres Almiray
+ */
+
 includePluginScript('flyway', '_FlywayInit')
 
 target(name: 'flywayrepair',
-        description: "The description of the script goes here!",
-        prehook: null, posthook: null) {
-        depends flywayInit
+    description: "Repairs the metadata table after a failed migration on a database without DDL transactions.",
+    prehook: null, posthook: null) {
+    depends flywayInit
 
-        flyway.repair()
+    flyway.repair()
 }
 
 setDefaultTarget('flywayrepair')

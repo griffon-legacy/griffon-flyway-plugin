@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
+/**
+ * @author Peter Kofler
+ * @author Andres Almiray
+ */
+
 includePluginScript('flyway', '_FlywayInit')
 
 target(name: 'flywayclean',
-        description: "The description of the script goes here!",
-        prehook: null, posthook: null) {
-        depends flywayInit
+    description: "Drops all (tables, views, procedures, triggers, ...) in the configured schemas.",
+    prehook: null, posthook: null) {
+    depends flywayInit
 
-        flyway.clean()
+    flyway.clean()
 }
 
 setDefaultTarget('flywayclean')

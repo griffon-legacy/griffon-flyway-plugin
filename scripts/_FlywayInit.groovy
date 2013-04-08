@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-
-import griffon.plugins.datasource.DataSourceHolder
+import griffon.util.ApplicationHolder
 import griffon.plugins.flyway.FlywayConnector
 import griffon.test.mock.MockGriffonApplication
 
@@ -25,12 +24,17 @@ import griffon.test.mock.MockGriffonApplication
  */
 
 includeTargets << griffonScript('_GriffonCompile')
+includeTargets << griffonScript('Package')
 
 target(name: 'flywayInit',
     description: "Initializes a Flyway instance for a given datasource",
     prehook: null, posthook: null) {
+    depends(prepackage)
 
-    depends compile // we need to compile to make sure the current configs are written
+    if (resourcesDir?.exists()) {
+        addUrlIfNotPresent rootLoader, resourcesDir
+        addUrlIfNotPresent classLoader, resourcesDir
+    }
 
     def mockApplication = new MockGriffonApplication()
     // MockApplication has mock config, but for DataSourceHolder we need proper application config
@@ -39,11 +43,6 @@ target(name: 'flywayInit',
     mockApplication.initialize()
 
     ApplicationHolder.application = mockApplication
-
-    def dataSourceName = argsMap.datasource ?: 'default'
-    def dataSource = DataSourceHolder.instance.fetchDataSource(dataSourceName)
-
-    def flywayConfig = FlywayConnector.instance.createConfig(mockApplication, dataSourceName)
-    flyway = FlywayConnector.instance.configureFlyway(flywayConfig, dataSourceName, dataSource)
+    flyway = FlywayConnector.instance.createFlyway(mockApplication, argsMap.datasource)
 }
 

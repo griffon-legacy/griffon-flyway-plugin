@@ -16,21 +16,25 @@
 
 import com.googlecode.flyway.core.info.MigrationInfoDumper
 
+import static griffon.util.GriffonExceptionHandler.sanitize
+
 /**
  * @author Peter Kofler
  * @author Andres Almiray
  */
-
-includeTargets << griffonScript('Package')
 
 includePluginScript('flyway', '_FlywayInit')
 
 target(name: 'flywayinfo',
     description: "Retrieve the complete information about the migrations including applied, pending and current migrations with details and status.",
     prehook: null, posthook: null) {
-    depends flywayInit, prepackage // we need to prepackage to put migrations into classpath
+    depends(flywayInit)
 
-    println('\n' + MigrationInfoDumper.dumpToAsciiTable(flyway.info().all()))
+    try {
+        println('\n' + MigrationInfoDumper.dumpToAsciiTable(flyway.info().all()))
+    } catch (x) {
+        throw sanitize(x)
+    }
 }
 
 setDefaultTarget('flywayinfo')

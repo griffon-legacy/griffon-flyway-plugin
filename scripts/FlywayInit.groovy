@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import static griffon.util.GriffonExceptionHandler.sanitize
+
 /**
  * @author Peter Kofler
  * @author Andres Almiray
@@ -24,9 +26,13 @@ includePluginScript('flyway', '_FlywayInit')
 target(name: 'flywayinit',
     description: "Initializes the metadata table in an existing schema.",
     prehook: null, posthook: null) {
-    depends flywayInit
+    depends(flywayInit)
 
-    flyway.init()
+    try {
+        flyway.init()
+    } catch(x) {
+        throw sanitize(x)
+    }
 }
 
 setDefaultTarget('flywayinit')

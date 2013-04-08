@@ -98,9 +98,23 @@ following way
 
 The following events will be triggered by this addon
 
- * FlywayCommand[command, dataSourceName, dataSource] - after a Flyway command
-   has been successfully executed. Comamnd may be one of `init`, `validate`,
-   `migrate`, `clean` or `repair`.
+ * FlywayCommand[command, dataSourceName] - after a Flyway command has been
+   successfully executed. Command may be one of `init`, `validate`, `migrate`,
+   `clean` or `repair`.
+
+Scripts
+-------
+ * **flyway-clean** - Drops all (tables, views, procedures, triggers, ...) in the
+   configured schemas
+ * **flyway-info** - Retrieve the complete information about the migrations
+   including applied, pending and current migrations with details and status.
+ * **flyway-init** - Initializes the metadata table in an existing schema.
+ * **flyway-migrate** - Triggers the migration of the configured database to the
+   latest version
+ * **flyway-repair** - Repairs the metadata table after a failed migration on a
+   database without DDL transactions
+ * **flyway-validate** - Validate the applied migrations in the database against
+   the available classpath migrations in order to detect accidental migration changes.
 
 [1]: http://flywaydb.org
 [2]: /plugin/datasource

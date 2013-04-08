@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import static griffon.util.GriffonExceptionHandler.sanitize
+
 /**
  * @author Peter Kofler
  * @author Andres Almiray
@@ -24,9 +26,13 @@ includePluginScript('flyway', '_FlywayInit')
 target(name: 'flywayrepair',
     description: "Repairs the metadata table after a failed migration on a database without DDL transactions.",
     prehook: null, posthook: null) {
-    depends flywayInit
+    depends(flywayInit)
 
-    flyway.repair()
+    try {
+        flyway.repair()
+    } catch(x) {
+        throw sanitize(x)
+    }
 }
 
 setDefaultTarget('flywayrepair')

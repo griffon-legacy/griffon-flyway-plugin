@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import static griffon.util.GriffonExceptionHandler.sanitize
+
 /**
  * @author Peter Kofler
  * @author Andres Almiray
@@ -26,7 +28,11 @@ target(name: 'flywayclean',
     prehook: null, posthook: null) {
     depends flywayInit
 
-    flyway.clean()
+    try {
+        flyway.clean()
+    } catch(x) {
+        throw sanitize(x)
+    }
 }
 
 setDefaultTarget('flywayclean')

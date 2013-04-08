@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
+import static griffon.util.GriffonExceptionHandler.sanitize
+
 /**
  * @author Peter Kofler
  * @author Andres Almiray
  */
-
-includeTargets << griffonScript('Package')
 
 includePluginScript('flyway', '_FlywayInit')
 
 target(name: 'flywayvalidate',
     description: "Validate the applied migrations in the database against the available classpath migrations in order to detect accidental migration changes.",
     prehook: null, posthook: null) {
-    depends flywayInit, prepackage // we need to prepackage to put migrations into classpath
+    depends(flywayInit)
 
-    flyway.validate()
+    try {
+        flyway.validate()
+    } catch(x) {
+        throw sanitize(x)
+    }
 }
 
 setDefaultTarget('flywayvalidate')

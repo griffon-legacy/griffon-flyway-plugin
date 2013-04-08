@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import griffon.plugins.datasource.DataSourceHolder
 import griffon.plugins.flyway.FlywayConnector
 
 import javax.sql.DataSource
@@ -26,15 +25,13 @@ class FlywayGriffonAddon {
     Map events = [
         'DataSourceConnectEnd': { String dataSourceName, DataSource dataSource ->
             if (app.addonManager.findAddon('hibernate3') || app.addonManager.findAddon('hibernate4')) return
-            FlywayConnector.instance.migrate(app, dataSourceName, dataSource)
+            FlywayConnector.instance.migrate(app, dataSourceName)
         },
         'Hibernate3SessionFactoryCreated': { ConfigObject config, String dataSourceName, sessionFactory ->
-            DataSource dataSource = DataSourceHolder.instance.fetchDataSource(dataSourceName)
-            FlywayConnector.instance.migrate(app, dataSourceName, dataSource)
+            FlywayConnector.instance.migrate(app, dataSourceName)
         },
         'Hibernate4SessionFactoryCreated': { ConfigObject config, String dataSourceName, sessionFactory ->
-            DataSource dataSource = DataSourceHolder.instance.fetchDataSource(dataSourceName)
-            FlywayConnector.instance.migrate(app, dataSourceName, dataSource)
+            FlywayConnector.instance.migrate(app, dataSourceName)
         }
     ]
 }
